@@ -1,0 +1,404 @@
+Index: src/main/java/com/wei/idea/Test1.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/wei/idea/Test1.java	(date 1557242959983)
++++ src/main/java/com/wei/idea/Test1.java	(date 1557242959983)
+@@ -0,0 +1,69 @@
++package com.wei.idea;
++
++
++public class Test1 {
++    public static void main(String[] args) {
++        final Test1 test1=new Test1();
++        new Thread(new Runnable() {
++            @Override
++            public void run() {
++                test1.test3();
++            }
++        }).start();
++        new Thread(new Runnable() {
++            @Override
++            public void run() {
++                test1.test1();
++            }
++        }).start();
++        new Thread(new Runnable() {
++            @Override
++            public void run() {
++                test1.test2();
++            }
++        }).start();
++
++        new Thread(new Runnable() {
++            @Override
++            public void run() {
++                test1.test4();
++            }
++        }).start();
++    }
++
++   public static   synchronized void  test1(){
++       System.out.println("执行test1");
++       try {
++           //执行test1后 休眠3秒
++           Thread.sleep(3000);
++       } catch (InterruptedException e) {
++           e.printStackTrace();
++       }
++   }
++   public void test2(){
++        synchronized(this){
++            System.out.println("执行test2");
++            try {
++                Thread.sleep(4000);
++            } catch (InterruptedException e) {
++                e.printStackTrace();
++            }
++        }
++   }
++   public void  test3(){
++        synchronized(Test1.class){
++            System.out.println("执行test3");
++            try {
++                Thread.sleep(3000);
++            } catch (InterruptedException e) {
++                e.printStackTrace();
++            }
++        }
++   }
++   public void test4(){
++        String s="11";
++        synchronized (this){
++            System.out.println("执行test4=="+s);
++        }
++   }
++}
+Index: src/main/java/com/wei/idea/Test2.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/wei/idea/Test2.java	(date 1557239638661)
++++ src/main/java/com/wei/idea/Test2.java	(date 1557239638661)
+@@ -0,0 +1,53 @@
++package com.wei.idea;
++
++import java.util.ArrayList;
++import java.util.List;
++
++public class Test2 {
++
++    private static final  long count=10000000L;
++
++    public static void main(String[] args) {
++        conust();
++        test2();
++    }
++    private  static void conust(){
++
++        // long long1 = System.currentTimeMillis();
++        long millis = System.currentTimeMillis();
++        Thread thread=new Thread(new Runnable() {
++            @Override
++            public void run() {
++                int a=0;
++                for (long i = 0; i <count; i++) {
++                        a+=5;
++                }
++            }
++        });
++        thread.start();
++        int b=0;
++        for (long i = 0; i < count; i++) {
++            b--;
++        }
++        try {
++            long time = System.currentTimeMillis() - millis;
++            thread.join();
++            System.out.println("共消耗;"+time+";b="+b);
++        } catch (InterruptedException e) {
++            e.printStackTrace();
++        }
++    }
++    public  static  void  test2(){
++        long start = System.currentTimeMillis();
++        int a = 0;
++        for (long i = 0; i < count; i++) {
++            a += 5;
++        }
++        int b = 0;
++        for (long i = 0; i < count; i++) {
++            b--;
++        }
++        long time = System.currentTimeMillis() - start;
++        System.out.println("消耗时间:" + time+"ms,b="+b+",a="+a);
++    }
++}
+Index: IDEA2.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- IDEA2.iml	(date 1557148372899)
++++ IDEA2.iml	(date 1557148372899)
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<module type="JAVA_MODULE" version="4" />
+\ No newline at end of file
+Index: pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- pom.xml	(date 1557236269983)
++++ pom.xml	(date 1557236269983)
+@@ -0,0 +1,67 @@
++<?xml version="1.0" encoding="UTF-8"?>
++
++<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
++  <modelVersion>4.0.0</modelVersion>
++
++  <groupId>com.wei</groupId>
++  <artifactId>idea2</artifactId>
++  <version>1.0-SNAPSHOT</version>
++  <packaging>war</packaging>
++
++  <name>idea2 Maven Webapp</name>
++  <!-- FIXME change it to the project's website -->
++  <url>http://www.example.com</url>
++
++  <properties>
++    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
++    <maven.compiler.source>1.7</maven.compiler.source>
++    <maven.compiler.target>1.7</maven.compiler.target>
++  </properties>
++
++  <dependencies>
++    <dependency>
++      <groupId>junit</groupId>
++      <artifactId>junit</artifactId>
++      <version>4.11</version>
++      <scope>test</scope>
++    </dependency>
++  </dependencies>
++
++  <build>
++    <finalName>idea2</finalName>
++    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
++      <plugins>
++        <plugin>
++          <artifactId>maven-clean-plugin</artifactId>
++          <version>3.1.0</version>
++        </plugin>
++        <!-- see http://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_war_packaging -->
++        <plugin>
++          <artifactId>maven-resources-plugin</artifactId>
++          <version>3.0.2</version>
++        </plugin>
++        <plugin>
++          <artifactId>maven-compiler-plugin</artifactId>
++          <version>3.8.0</version>
++        </plugin>
++        <plugin>
++          <artifactId>maven-surefire-plugin</artifactId>
++          <version>2.22.1</version>
++        </plugin>
++        <plugin>
++          <artifactId>maven-war-plugin</artifactId>
++          <version>3.2.2</version>
++        </plugin>
++        <plugin>
++          <artifactId>maven-install-plugin</artifactId>
++          <version>2.5.2</version>
++        </plugin>
++        <plugin>
++          <artifactId>maven-deploy-plugin</artifactId>
++          <version>2.8.2</version>
++        </plugin>
++      </plugins>
++    </pluginManagement>
++  </build>
++</project>
+Index: src/main/webapp/index.jsp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/webapp/index.jsp	(date 1557148347516)
++++ src/main/webapp/index.jsp	(date 1557148347516)
+@@ -0,0 +1,5 @@
++<html>
++<body>
++<h2>Hello World!</h2>
++</body>
++</html>
+Index: src/main/test/java/com/wei/idea/Test2Test.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/test/java/com/wei/idea/Test2Test.java	(date 1557235394506)
++++ src/main/test/java/com/wei/idea/Test2Test.java	(date 1557235394506)
+@@ -0,0 +1,7 @@
++package com.wei.idea;
++
++import static org.junit.Assert.*;
++
++public class Test2Test {
++
++}
+\ No newline at end of file
+Index: src/main/webapp/WEB-INF/web.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/webapp/WEB-INF/web.xml	(date 1557148347514)
++++ src/main/webapp/WEB-INF/web.xml	(date 1557148347514)
+@@ -0,0 +1,7 @@
++<!DOCTYPE web-app PUBLIC
++ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
++ "http://java.sun.com/dtd/web-app_2_3.dtd" >
++
++<web-app>
++  <display-name>Archetype Created Web Application</display-name>
++</web-app>
+diff --git target/classes/com/wei/idea/Test1$1.class target/classes/com/wei/idea/Test1$1.class
+new file mode 100644
+index 0000000000000000000000000000000000000000..aba5db9a1a4dd1bcbe6a97b75184e26355aa0696
+GIT binary patch
+literal 592
+zc${rg%TB^T6g?wgp;W1e;QJL8h>6u;+-TeoO-xV|A#7X?WdcLWG-(Tdmx+(Wg&*KY
+z8ShjQOr%NgoqKxjxsU1B_s1uI8ul|tV%0<nYbJ_VH?Uz~)4&!(X3V{EB*N%~q0n&s
+zq4Ol9BfEk-EsdTt%wI?)qf3TTWftL}&5*47UBQrRNG0w@!;T1AyyFp)Z}=|v+B}dt
+zo`A`yFGB|FMkx{0JsyUF!r~0^vaX*9Mv81j7c!gvC~(EK)H-I&IU4XWr`lJ__54t(
+z-mQrGe%HXZg&pi#Fp##8LEge1@-*eFG7PqsaXhYi&V6Sf+=!Z=LJuRQCKLTnr-_DK
+zQjf*TV`G}ri~{N=-cL$zxQ1i8h7@R{V79IMqT89HHv^N<ES*j%)`(d>d<Cn%W9~WT
+zSY#=StbqlxR(v+G2%9{^67my;GxGXdy7~h4hQu`A{8c7}>>rKvL?eOam|4II`6T@&
+NCFEj0jR*ate*hxrb6NlZ
+
+diff --git target/classes/com/wei/idea/Test1$2.class target/classes/com/wei/idea/Test1$2.class
+new file mode 100644
+index 0000000000000000000000000000000000000000..2db1d5e9933ade9600e848a3cd3c07a69ee053da
+GIT binary patch
+literal 593
+zc${rg+e*Vg5It*K)5NH0t*!SPeW(?TH}FC6r6>qh!HPckv`rVgCEY+S^}7T`@xc%9
+zqr}-zs9-nj%+ATonal3?&*v9_Lu{GIV!=WVix$dQGO%o5#lR|qIpBUZ7E!#<P-=QX
+z-+dO+l^wy|JB^+&OrA<5<1>azZJfjQJwvt;bOgg}Qz~(t^xGo5<87aiVl(i#f6qgy
+z?ID<ryE0<1FO?Eu!{<>X$SjW`uO3kTOqeK=HJ!+61xe_M3#oam)MvNH2b^-BE6)!i
+zsh+Mx+zmPg)@-a}!-j#p4HHEhn<!G3<I*rVn#T3HdU9{tJ>kVv{0O>Dlp1#QKb$)1
+zb4fLpYmd!QOe+qlnsh$7bi&x9Ysi5n3g$SvF1now+9oVQr|5J<wnnV_&Kp?$9TP99
+zk4=)INKVrSvh~@*3>?x71r&!2$E5W?v;GS9@PW*Tz)GndN?Z6tVh%|%m`goNm?xd3
+OcT&M@8b$p<ulz5!7<0)0
+
+diff --git target/classes/com/wei/idea/Test1$3.class target/classes/com/wei/idea/Test1$3.class
+new file mode 100644
+index 0000000000000000000000000000000000000000..97a5281e1e3166629ded9e46061e2ae88815d29d
+GIT binary patch
+literal 592
+zc${rfTT22#6#m9btJ{{FnRdV7gBi4y(M!>b6a-d~;!98CI_Stc3%jfRuAmF_&=2TG
+zMQ0YlAQ$$WIp2KeJD2(X`TPP<!+sViteQw;%|sFF1~v?A8rWjUj=5KkL>Qeg6dJBS
+zbe@HDWLI#frO^w9xl5^Jbj47r%px4L8B%q>D;RPOsl@$g*bzaCcRWJ!4d3Nnn+H<I
+z6EGF^WyoONDkXxt$HP!iSezkVu2KDDFj8bIx{%rQM}aGDq}DNG&e4F6In};auIGnR
+z_3lK}_qztRE$m>|f`N>MEb<oikf$kUm0_^8jN@_Da~?Va;YQT_6nY#fHJRvtI!!d>
+zl6ovwo*L7fW)x62@qW^J!>2f=XGnuK3TE57FM6E>{aKiV&eQ3PVvU&9!#A+%2NEwa
+z$0AEvWS6l(){4(27GaZTSVDfHa86#|WvZ`W??_Jb%~-iebxVIVG82s?DQji{E96te
+ND<KzW(Rk2b<`*)lbAbQ=
+
+diff --git target/classes/com/wei/idea/Test1$4.class target/classes/com/wei/idea/Test1$4.class
+new file mode 100644
+index 0000000000000000000000000000000000000000..ea6a44daf6171e32dd177a652347507546e2e82d
+GIT binary patch
+literal 592
+zc${rgTT22#6#m9btJ{`lre$dtd@zHyNO~!Hk%GVqQhe!YTn8OlXJL1>-xYL$9{K_O
+zsOZch805m9Gw0j$edjX!{qy++;0y<8B(P~Bi7gWalniVe*fCIMNKd(24Mh;1GUQv1
+zH@2UJv}Ip#yQ9$yhNVlXWO&6;tSw47>@p;pUSBX|T2hJo$+#!{4)3{y<XWD?-7fc~
+zj%Q#Z9Lj*fx>ZW}O_v9Ops=t&yxO4paet!7)^s7W?M-|~+(@lsMmfhLKIK&VS~;#4
+zNHw?<;n3?Fs94y=o&^Ib3u)vm>?220E-J&2)iSor)xdt}jf4|Y^K<BNqSS1n|8$yY
+z%q8_$s6DmjoOb9_H_?8QdczHz&^07M8wJZ|bzgKlF?!Q530<aBgJO-C^`kei`Uhe!
+zQI18HSY%6BA!|iv6RXIQXIMjSrf^PPe@oS0!QK&{^UX-POm!=NG*UB-IM$=gJT}ND
+P=r<`M6R~JK=qL3HJy~;_
+
+diff --git target/classes/com/wei/idea/Test1.class target/classes/com/wei/idea/Test1.class
+new file mode 100644
+index 0000000000000000000000000000000000000000..12fd40651176abb43de3b146cfc8e170f540c11a
+GIT binary patch
+literal 2096
+zc$|GzZBrXn6n=I|*kxJXQb-v30@8vZ0nz}r))Z`^t<okG3Zk*TE#V4_VUyWxto{UN
+z{0q+Lr;Z=$41R!)%;-$}tv|%^H~7K&+|3dKL^red<eq!(d7ks!Gk0J8^V{zLrm<t-
+z4a{kH*MKVREe*E~gfVX*gatX=(Qwy58|F3KGte&Wdj>i%--h?GsN=qY2gruuKkd)u
+zmYjwq1ATa?V>wvp`ccP<jz=0+4P3ySjx}jNki)u$4;7e;jw9TKqE)Ggih|agwqtv9
+z3R>c0>k2{(rA?urD{DJqsk*x%+%;>XNKYhNDp<vJ%eCb^aE82Xn>l*3h0<>7iLg`l
+zrm#|LqT;19T-~*7M?p0HIJ;wgZKaBqvz1!)T-({o_*j;^#ogzcEGr0mGK&I*FhdOi
+zi;gE;w_5hZ=G|`!qU_lvhv6Noo>llNXO(?s)FsF;MafyVhK~ZrbYN$gx+2RugRLR2
+zz*sF+-GaDh%Q6kWqDdKP;xevq+u4E@bRVZ$+jfPuNoCH)T}jIvAIssfiBDv<W>Hhk
+z-P6t8Ga5cM@fki>(EjIlPyhPqdtW{cUzo74VWI%Cx%B@snh=srLxQOjGh(Z0))_l3
+z*?iS5ZVH#Da2z}{J8R-gY?;`GeL|au8#|)l@!U_yReDlusqWLsi5G9yU$TR^avc7s
+z>NqlozY?x^mg}8N_ie=!yKMAQl?#2fopvd;Ocak;!rILou{!Bipq1sU$Zqb7H*e-}
+zr6@$1O&z~4r(NaRb~fdjYZX{nt5q%who>;nEW;UBpeY&YUg=1Q-uT(T3@;XyuY6je
+z$o}Lw!dZ$|p$#VvpzQIFiqRklyglCJXx0J{#~5uJ5=aJ{f2LQZT{(oBKR`?N5TX1b
+z!ujL@S`VP@L$7(-q{nFVv`dfK=;@H2&YI_#NCJjWM~8+OsSNP88$$%+IEM`SF-K1h
+zgILCpPc~X3#PtbU9gCP`yux>~Uh@uPWJ$4K(G}_5M^7&z&(Zr7`h&ziqI+D_(TN`3
+znk_zw0TKX3(>d#8svbf`s7I9ajueVetrV_umgcKLUC}TV;=*(t_Ze|Rv?Gap_Jzcb
+z`Plt6?A$o9lP~#iDfx2Zk3C|W%-Y9ah!^u9Hx6Rhw>4J7<O3EOVyPyvBbZ|BRkBKx
+zv4oweOA-y(NpVJklT7=Sg<f-$s)4t|TTmoteq^rw4N3iao%$~U_0fnLa35&YtqJ!I
+z9#E92!??(!0pH8MZRCE9tJfKMgRwUm{SJ>fgY%dr=3Je7tbzOJY3|Yg;{JA>`wzsF
+z+>?>>*+f1k*&pHp`}Jbv(mn>0eD^WLa>o4v#{B|R9^tURUCK35Cmx0Th~DDtHY4U)
+z(gK^{PDAe{1BxxQH&~M5lkJE4nrT{mvYCLdPgP~<vfF2gCxr=75cs{@9@w_P);{0*
+Ezps6sA^-pY
+
+diff --git target/classes/com/wei/idea/Test2$1.class target/classes/com/wei/idea/Test2$1.class
+new file mode 100644
+index 0000000000000000000000000000000000000000..1d3c1c03bedce2f1083253d093f58199eda4c532
+GIT binary patch
+literal 571
+zc${rgJx|;~5Pf_0ox%7xK8`y`__!hkP+%Y>2nivOKu014M8D@-!4k7Z{(zQ(pMVfW
+z`qZhADEI;V8(O3Uo_(iKB)giOotZc9jn;np^Y94ZGg=NlxTxS`8Tq=qy>c+^V8+3$
+zKxJJUoo)zN^9x4;_EywY0=2d_>PvRkQSqVdgv^Y!qd<m7GS+$APul5;P6WJNV^q8q
+z$|O+?8|@%E^DmY5byrFMP$lW=r<FBI#F-Hgnzl!iv|WMfK`Mjq`|`X`>K;T{9H<>#
+z1V#7Ksk|V%wrzqiO0+rNSLsRA^)QD)j`pvdhk?9O|KA`2BRQQPN^|Ug?VPG0CC7W}
+zTV_mel1dPnEJ?A9GM`Vt;p>%X<YwgZ=F<!M^5Q*8zl!n@&q|RTgU8eB0Z>Jap5lL-
+zGuYff(^?<gY}H}i{6O_ulv}Rc{Q3Hv(^&;w1NoPmAbEpyO%gS@rwaNOF*c<}Y58o;
+ozEFwyanva_!N^7FH*8_Q5NEMBuQxGCZxb<v;Q}Mj`$Goa0A6cmZ~y=R
+
+diff --git target/classes/com/wei/idea/Test2.class target/classes/com/wei/idea/Test2.class
+new file mode 100644
+index 0000000000000000000000000000000000000000..531e3f713936386b87a06bf6afb9488401190d4c
+GIT binary patch
+literal 1868
+zc$|fl-%}e^6vw}pY_iF+6bQeB23n-GX-gZ6Ra(Li1zQC}e-WuzwcaFKSeoo+HXDDu
+z^`XxA2RPCP-+9LA1g6aR2l#*3(HCcY?Tp3m-K3Nj29wD-ch5cd+;cwXWPgAD<Tn8C
+z;J$%=Oc^lnz7ii8n8u8b4|QBI5K%i}Tvg&D9Uq6GK97EWpbWDyy3XnN#6T;iqR1#c
+zuf(+|t}A^*iJJy)VL?aMz#I59ip3~yNAa1CB>{8RaV&49C@U4KA`s5IRmT?)a{?_h
+zu2b=)<1fl$)e?w|+m7u|3WSoU7X`E#w?J!a#&)c0)l$y#vNBhsC7yBfvbZQcTRk_7
+zn!jQ*erG1{mQvqZcFHbTGL^L|{z#g;C22bX-N`$dRr!rf6{WMBTJSyFSxyIcNpG2_
+zI}X@pUU}E4R#eiqy2mc@I>F!ZJ<hX^Z+Tv|>|2E^-{q~cZ@Z2<TC$5pl~=@H@hn+T
+z$-g|54QzB1IsRrzWWksD`}49K6cw~6OJ=^Rf|{^Am4*~B7Tl_rx31c%b|WbByb5gM
+zO$?bhr^FbBbbM~&4!#g*d;MCn+K=kQ1r^{+6KM=F*ZmGAzEYv@;%kAP*I7+h?P9_5
+zn9v_TY&@;~_~(PQv<Zov5_$GDotse0f(Z-vbS#@#0htaQ&e6oG%BH0r@#$LaueHZx
+z#8IjY=O!3+SWdiB-}T(8mG@sUEqq_`t&%`{zUq0F<7e5#`9^CvZ5+m)<etXdsydG9
+zKz%k=T{Sx)x5}7ZbuZgZ-C)H&>$YS`HCmR-mP4rLk_SxKK2w7f4<?dxhi}gwwjK4|
+zx{2LP?sud|#{u~Y=w<a(WLaGY<;$vD%XNRwW7d;-3xiOv5kR01$8el_kWWo$hQ>9g
+zj`9R8DQZC-KC=n25xAVBj0DCA-l8<?4mgD*bquF*rg8XkZ~>rip=k@Dm&cDFMA=Mf
+zGDypwFgng+nA%W7Uk@XWF{cP^t6R{fwh><1Mr3Id`X-|D!!^W0ld(~)TkAygPrsn`
+zVQ8mYGvuhYzVkN^3|ONYomzgyk!`f{SX;ckhIqGDLr1)mtNt3gYUr+^XC20v*2|6F
+z4c>f#e~TR7fT1AcG3E@kGm|(va1=dApqB(sVt{4$(|Zt?$Zeci-(@{HW?tZ~O)RRq
+zNmh_R7tWKlM$c0ut5yYqdz+^<e(zy~HZcBezUMEJRWEMhUA)H}MrrSXw!<KrrsI;(
+zfM@6|>$n^t^RZo6u?DOa1uHZWn;xulX?fTb9yH|i`p!T9%WDs-zFk&F8?539E)u)Y
+zR8#ASM%Y5I`x^TnVH?}n$PVg07M)<ZNfvsR`XW8kEO42t7iglys?dZuj4vQ5IOzaL
+wggD2Ep^0%a4IpU_NFCv5fJ}Ris3x>$X#W?1?xg!fFmaRYk(wwGfB~Za0l)c&m;e9(
+
+diff --git target/test-classes/com/wei/idea/Test2Test.class target/test-classes/com/wei/idea/Test2Test.class
+new file mode 100644
+index 0000000000000000000000000000000000000000..983d197d7370bd097d1092c6c05d6553e015c184
+GIT binary patch
+literal 278
+zc${rcO>4qX5S)!MY15d59*S3QZ4Z5*M~jz2PeBhA?=SJuzK{=yiT*B6LJ$1`{ZXa+
+zV({cH3^TJcu)lxbKLBQkJPa^$5x58m&Z{nUvmgu}pEd;ht=cL=80%6k+agi*S|&L=
+z_i>fVd?RaZbZ^?tm);S^aatAPptR6iCB<6pnyG;~!TYG%I#uu5#DmM_C6jyU!^V*C
+zaJ@{3Oi1Li{1mGsQ)z<<EdJdL@p7BdVI?{Z44+S+BNGcQqjNTK!|3<?7G77s>r(zd
+D?Akep
+
