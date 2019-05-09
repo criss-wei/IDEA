@@ -8,9 +8,9 @@ public class Test2 {
     private static final  long count=10000000L;
 
     public static void main(String[] args) {
+
         conust();
         test2();
-        System.out.println("ssssf");
     }
     private  static void conust(){
 
